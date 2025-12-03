@@ -1,3 +1,4 @@
+// midi
 const rows = 12; // C to B
 const cols = 32; // steps
 const roll = document.getElementById("roll");
@@ -35,7 +36,7 @@ function playFreq(freq) {
   o.stop(ctx.currentTime + 0.25);
 }
 
-// midi
+// midi -------------------------------------------------------------
 navigator.requestMIDIAccess().then(access => {
   document.getElementById("midi-status").textContent = "MIDI Ready";
 

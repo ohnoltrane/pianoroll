@@ -1,0 +1,44 @@
+body {
+  background: #111;
+  color: #eee;
+  font-family: sans-serif;
+  text-align: center;
+}
+
+#piano {
+  position: relative;
+  width: 700px;
+  margin: 40px auto;
+  height: 200px;
+}
+
+.white {
+  width: 40px;
+  height: 200px;
+  background: white;
+  border: 1px solid #333;
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.black {
+  width: 30px;
+  height: 120px;
+  background: black;
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.white:active,
+.white.active {
+  background: #ddd;
+}
+
+.black:active,
+.black.active {
+  background: #444;
+}
