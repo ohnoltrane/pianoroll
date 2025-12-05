@@ -57,7 +57,7 @@
 </head>
 <body>
 
-<h1>Web Piano Demo</h1>
+<h1>piano thingy</h1>
 <div class="piano" id="piano"></div>
 
 <script>
@@ -131,7 +131,7 @@ const keyMap = {
 };
 
 document.addEventListener("keydown", e => {
-    if (!keyMap[e.key]) return;
+    if (!(e.key in keyMap)) return;
     const index = keyMap[e.key];
     const keyEl = document.querySelector(`[data-index="${index}"]`);
     if (keyEl) {
