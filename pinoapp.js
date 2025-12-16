@@ -61,10 +61,10 @@ function play(freq) {
 }
 
 // Mouse input
-piano.addEventListener("mousedown", (e) => {
-  if (e.target.classList.contains("key")) {
-    e.target.classList.add("active");
-    play(e.target.dataset.freq);
+piano.addEventListener("mousedown", (keyItem) => {
+  if (keyItem.target.classList.contains("key")) {
+    keyItem.target.classList.add("active");
+    play(keyItem.target.dataset.freq);
   }
 });
 document.addEventListener("mouseup", () => {
@@ -90,9 +90,9 @@ const keyMap = {
   k: 12,
 };
 
-document.addEventListener("keydown", (e) => {
-  if (!(e.key in keyMap)) return;
-  const index = keyMap[e.key];
+document.addEventListener("keydown", (keyItem) => {
+  if (!(keyItem.key in keyMap)) return;
+  const index = keyMap[keyItem.key];
   const keyEl = document.querySelector(`[data-index="${index}"]`);
   if (keyEl) {
     keyEl.classList.add("active");
@@ -100,8 +100,18 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-document.addEventListener("keyup", (e) => {
+document.addEventListener("keyup", (keyItem) => {
   document
     .querySelectorAll(".key")
     .forEach((k) => k.classList.remove("active"));
 });
+
+// TODO: Fix repeated keydown events when holding a key
+// TODO: Fix note length
+// TODO: Volume control
+// TODO: Add touch support
+// TODO: Improve styling
+
+// TODO: Waveform selection
+// TODO: Sustain pedal simulation
+// TODO: More octaves
