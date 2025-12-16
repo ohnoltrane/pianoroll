@@ -1,88 +1,107 @@
-// pino ------------------------------------------------------------
-const AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const notes = [
+  { note: "C", freq: 261.63 },
+  { note: "C#", freq: 277.18, black: true },
+  { note: "D", freq: 293.66 },
+  { note: "D#", freq: 311.13, black: true },
+  { note: "E", freq: 329.63 },
+  { note: "F", freq: 349.23 },
+  { note: "F#", freq: 369.99, black: true },
+  { note: "G", freq: 392.0 },
+  { note: "G#", freq: 415.3, black: true },
+  { note: "A", freq: 440.0 },
+  { note: "A#", freq: 466.16, black: true },
+  { note: "B", freq: 493.88 },
+  { note: "C2", freq: 523.25 },
+];
+
 const piano = document.getElementById("piano");
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-// NOTES for one octave (C4–B4)
-const whiteNotes = ["C", "D", "E", "F", "G", "A", "B"];
-const blackNotes = ["C#", "D#", null, "F#", "G#", "A#"]; 
-// null = skip black key (no black key after E/B)
+let keyCounter = 0;
 
-const noteToFreq = note =>
-  440 * Math.pow(2, (note - 69) / 12);
-
-// map note names to numbers (C4 = 60)
-const nameToMidi = {
-  "C4": 60, "C#4": 61, "D4": 62, "D#4": 63, "E4": 64,
-  "F4": 65, "F#4": 66, "G4": 67, "G#4": 68, "A4": 69,
-  "A#4": 70, "B4": 71
-};
-
-//pino UI ----------------------------------------------
-// build white keys
-whiteNotes.forEach((note, i) => {
+// Create keys
+notes.forEach((noteItem, i) => {
   const key = document.createElement("div");
-  key.className = "white";
-  key.dataset.note = note + "4";
-  key.onclick = () => playNote(key.dataset.note);
+  key.className = "key" + (noteItem.black ? " black" : "");
+  key.dataset.freq = noteItem.freq;
+  key.dataset.index = i;
+  key.innerText = noteItem.note;
   piano.appendChild(key);
+
+  // Position black keys
+  if (noteItem.black) {
+    key.style.left = `${keyCounter - 20}px`;
+    keyCounter -= 62;
+  }
+
+  keyCounter += 62;
+  // const keyCounter = notes.slice(0, i + 1).filter((note) => !note.black).length;
+  // if (!noteItem.black) {
+  //   key.style.left = `${keyCounter * 62}px`;
+  // } else {
+  //   key.style.left = `${keyCounter * 62 - 20}px`;
+  // }
 });
 
-// build black keys (positioned above whites)
-blackNotes.forEach((note, i) => {
-  if (!note) return;
-
-  const key = document.createElement("div");
-  key.className = "black";
-  key.dataset.note = note + "4";
-  key.style.left = `${(i * 40) + 28}px`;
-  key.onclick = () => playNote(key.dataset.note);
-  piano.appendChild(key);
-});
-
-function playNote(note) {
-  const midi = nameToMidi[note];
-  const freq = noteToFreq(midi);
-
-  const osc = AudioCtx.createOscillator();
-  const gain = AudioCtx.createGain();
-
+// Play sound
+function play(freq) {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
   osc.frequency.value = freq;
-  osc.connect(gain);
-  gain.connect(AudioCtx.destination);
+  osc.type = "sine";
 
-  gain.gain.setValueAtTime(0.3, AudioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, AudioCtx.currentTime + 0.5);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  gain.gain.setValueAtTime(1, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
 
   osc.start();
-  osc.stop(AudioCtx.currentTime + 0.6);
-
-  flashKey(note);
+  osc.stop(audioCtx.currentTime + 1);
 }
 
-// highlight key when played
-function flashKey(note) {
-  const key = document.querySelector(`[data-note='${note}']`);
-  key.classList.add("active");
-  setTimeout(() => key.classList.remove("active"), 150);
-}
+// Mouse input
+piano.addEventListener("mousedown", (e) => {
+  if (e.target.classList.contains("key")) {
+    e.target.classList.add("active");
+    play(e.target.dataset.freq);
+  }
+});
+document.addEventListener("mouseup", () => {
+  document
+    .querySelectorAll(".key")
+    .forEach((k) => k.classList.remove("active"));
+});
 
-// keyboard input → piano
-const keyBindings = {
-  "a": "C4",
-  "w": "C#4",
-  "s": "D4",
-  "e": "D#4",
-  "d": "E4",
-  "f": "F4",
-  "t": "F#4",
-  "g": "G4",
-  "y": "G#4",
-  "h": "A4",
-  "u": "A#4",
-  "j": "B4"
+// Keyboard mapping
+const keyMap = {
+  a: 0,
+  w: 1,
+  s: 2,
+  e: 3,
+  d: 4,
+  f: 5,
+  t: 6,
+  g: 7,
+  y: 8,
+  h: 9,
+  u: 10,
+  j: 11,
+  k: 12,
 };
 
-document.addEventListener("keydown", e => {
-  const note = keyBindings[e.key];
-  if (note) playNote(note);
+document.addEventListener("keydown", (e) => {
+  if (!(e.key in keyMap)) return;
+  const index = keyMap[e.key];
+  const keyEl = document.querySelector(`[data-index="${index}"]`);
+  if (keyEl) {
+    keyEl.classList.add("active");
+    play(keyEl.dataset.freq);
+  }
+});
+
+document.addEventListener("keyup", (e) => {
+  document
+    .querySelectorAll(".key")
+    .forEach((k) => k.classList.remove("active"));
 });

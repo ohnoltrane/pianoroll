@@ -1,153 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Simple Piano</title>
-<style>
-    body {
-        background: #111;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-family: sans-serif;
-        color: white;
-        margin-top: 40px;
-    }
-
-    h1 { margin-bottom: 20px; }
-
-    .piano {
-        display: flex;
-        position: relative;
-    }
-
-    .key {
-        width: 60px;
-        height: 250px;
-        border: 1px solid #000;
-        background: white;
-        margin: 0 1px;
-        border-radius: 4px;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: flex-end;
-        padding-bottom: 10px;
-        box-sizing: border-box;
-        user-select: none;
-    }
-
-    .key.black {
-        width: 40px;
-        height: 150px;
-        background: black;
-        color: white;
-        position: absolute;
-        margin-left: -20px;
-        z-index: 2;
-    }
-
-    .key.active {
-        background: #ddd;
-    }
-    .key.black.active {
-        background: #444;
-    }
-</style>
-</head>
-<body>
-
-<h1>piano thingy</h1>
-<div class="piano" id="piano"></div>
-
-<script>
-const notes = [
-    {note: "C",  freq: 261.63}, 
-    {note: "C#", freq: 277.18, black: true}, 
-    {note: "D",  freq: 293.66},
-    {note: "D#", freq: 311.13, black: true},
-    {note: "E",  freq: 329.63},
-    {note: "F",  freq: 349.23},
-    {note: "F#", freq: 369.99, black: true},
-    {note: "G",  freq: 392.00},
-    {note: "G#", freq: 415.30, black: true},
-    {note: "A",  freq: 440.00},
-    {note: "A#", freq: 466.16, black: true},
-    {note: "B",  freq: 493.88},
-    {note: "C2", freq: 523.25}
-];
-
-const piano = document.getElementById("piano");
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-// Create keys
-notes.forEach((n, i) => {
-    const key = document.createElement("div");
-    key.className = "key" + (n.black ? " black" : "");
-    key.dataset.freq = n.freq;
-    key.dataset.index = i;
-    key.innerText = n.note;
-    piano.appendChild(key);
-
-    // Position black keys
-    if (n.black) {
-        key.style.left = `${(i * 62) - 20}px`;
-    }
-});
-
-// Play sound
-function play(freq) {
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.frequency.value = freq;
-    osc.type = "sine";
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    gain.gain.setValueAtTime(1, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
-
-    osc.start();
-    osc.stop(audioCtx.currentTime + 1);
-}
-
-// Mouse input
-piano.addEventListener("mousedown", e => {
-    if (e.target.classList.contains("key")) {
-        e.target.classList.add("active");
-        play(e.target.dataset.freq);
-    }
-});
-document.addEventListener("mouseup", () => {
-    document.querySelectorAll(".key").forEach(k => k.classList.remove("active"));
-});
-
-// Keyboard mapping
-const keyMap = {
-    "a": 0, "w": 1, "s": 2, "e": 3, "d": 4,
-    "f": 5, "t": 6, "g": 7, "y": 8, "h": 9,
-    "u": 10, "j": 11, "k": 12
-};
-
-document.addEventListener("keydown", e => {
-    if (!(e.key in keyMap)) return;
-    const index = keyMap[e.key];
-    const keyEl = document.querySelector(`[data-index="${index}"]`);
-    if (keyEl) {
-        keyEl.classList.add("active");
-        play(keyEl.dataset.freq);
-    }
-});
-
-document.addEventListener("keyup", e => {
-    document.querySelectorAll(".key").forEach(k => k.classList.remove("active"));
-});
-</script>
-
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Simple Piano</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>piano thingy</h1>
+    <div class="piano" id="piano"></div>
+    <script src="pinoapp.js"></script>
+  </body>
 </html>
-
 
 <!-- <!DOCTYPE html> uses the pinoapp.js and style.css
 <html lang="en">
