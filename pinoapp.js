@@ -54,7 +54,7 @@ function play(freq) {
   gain.connect(audioCtx.destination);
 
   gain.gain.setValueAtTime(1, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
 
   osc.start();
   osc.stop(audioCtx.currentTime + 1);
@@ -90,6 +90,9 @@ const keyMap = {
   k: 12,
 };
 
+// Fix repeated keydown events when holding a key
+let keysPressed = new Set();
+
 document.addEventListener("keydown", (keyItem) => {
   if (!(keyItem.key in keyMap)) return;
   const index = keyMap[keyItem.key];
@@ -98,15 +101,17 @@ document.addEventListener("keydown", (keyItem) => {
     keyEl.classList.add("active");
     play(keyEl.dataset.freq);
   }
+  // if (keysPressed.has(keyItem.key)) return;
+  // keysPressed.add(keyItem.key); //these only prevent multiple keydown events
 });
 
 document.addEventListener("keyup", (keyItem) => {
   document
     .querySelectorAll(".key")
     .forEach((k) => k.classList.remove("active"));
+  // keysPressed.delete(keyItem.key);
 });
 
-// TODO: Fix repeated keydown events when holding a key
 // TODO: Fix note length
 // TODO: Volume control
 // TODO: Add touch support
