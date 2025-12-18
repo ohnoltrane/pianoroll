@@ -1,65 +1,75 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>midithing</title>
-    <style>
-      body {
-        font-family: sans-serif;
-        background: #111;
-        color: white;
-      }
-      .roll {
-        display: grid;
-        grid-template-columns: repeat(32, 20px);
-        grid-template-rows: repeat(12, 20px);
-        gap: 2px;
-      }
-      .cell {
-        width: 20px;
-        height: 20px;
-        background: #222;
-        border-radius: 3px;
-        transition: background 0.1s;
-        cursor: pointer;
-      }
-      .cell.active {
-        background: #4ade80; /* green */
-      }
-      .playhead {
-        position: absolute;
-        top: 0;
-        width: 2px;
-        height: 100%;
-        background: red;
-        animation: move 4s linear infinite;
-      }
-      @keyframes move {
-        from {
-          transform: translateX(0);
-        }
-        to {
-          transform: translateX(640px);
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>musictime</h1>
-      <nav>
-        <a href="index.html">pianoroll</a>
-        <a href="midithing.html">midithing</a>
-      </nav>
-    </header>
 
-    <h2>midithing</h2>
-    <p id="midi-status">Connecting MIDI…</p>
-    <div style="position: relative">
-      <div class="playhead"></div>
-      <div class="roll" id="roll"></div>
-    </div>
+<head>
+  <meta charset="UTF-8" />
+  <title>midithing</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #111;
+      color: white;
+    }
 
-    <script src="midiapp.js"></script>
-  </body>
+    .roll {
+      display: grid;
+      grid-template-columns: repeat(32, 20px);
+      grid-template-rows: repeat(12, 20px);
+      gap: 2px;
+    }
+
+    .cell {
+      width: 20px;
+      height: 20px;
+      background: #222;
+      border-radius: 3px;
+      transition: background 0.1s;
+      cursor: pointer;
+    }
+
+    .cell.active {
+      background: #4ade80;
+      /* green */
+    }
+
+    .playhead {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: red;
+      animation: move 4s linear infinite;
+    }
+
+    @keyframes move {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(640px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>musictime</h1>
+    <nav>
+      <a href="index.html">pianoroll</a>
+      <a href="midithing.html">midithing</a>
+    </nav>
+  </header>
+
+  <h2>midithing</h2>
+  <p id="midi-status">Connecting MIDI…</p>
+  <div style="position: relative">
+    <div class="playhead"></div>
+    <div class="roll" id="roll"></div>
+  </div>
+
+  <script src="midiapp.js"></script>
+</body>
+
 </html>
